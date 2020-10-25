@@ -9,7 +9,7 @@
     Не сработает - запустите через sudo, или откройте проект в PyCharm, он поднимет venv с колен самостоятельно)
 2.  Для запуска вам потребуется актуальная версия Питона, Селениум и PyTest
     Установка зависимостей (при наличии [Python](https://www.python.org/)) через терминал:
-    ##### pip install -r requirements.txt
+    ##### `pip install -r requirements.txt`
 3. Актульные версии ChromeDriver, Geckodriver:
     * ###### [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
     * ###### [Geckodriver](https://github.com/mozilla/geckodriver/releases/)
