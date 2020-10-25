@@ -1,14 +1,14 @@
-from .pages.product_page import ProductPage
-from .pages.locators import ProductPageLocators
-from .pages.locators import LoginPageLocators
+from pages.product_page import ProductPage
+from pages.locators import ProductPageLocators
+from pages.locators import LoginPageLocators
 import pytest
-from .pages.login_page import LoginPage
+from pages.login_page import LoginPage
 
 
-@pytest.mark.parametrize('link', ProductPageLocators.PARAMETRIZE_LINKS[0])
+@pytest.mark.parametrize('link', ProductPageLocators.PARAMETRIZE_LINKS)
 @pytest.mark.need_review
 def test_guest_can_add_product_to_basket(browser, link):
-    page = ProductPage(browser, ProductPageLocators.PARAMETRIZE_LINKS)
+    page = ProductPage(browser, link)
     page.open()
     page.click_add_button()
     page.solve_quiz_and_get_code()
