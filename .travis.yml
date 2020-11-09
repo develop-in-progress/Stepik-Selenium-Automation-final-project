@@ -2,18 +2,21 @@ sudo: required
 language: python
 python:
   - "3.6"      # current default Python on Travis CI
-# command to install dependencies
-install:
-  - pip install -r requirements.txt
+
 # command to run tests
 addons:
   chrome: stable
 #   firefox: "49.0"
-before_install:
-  - pip install selenium
-  - wget https://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
-  - unzip chromedriver_linux64.zip
 
+# command to install dependencies
+install:
+
+    - pip install -r requirements.txt
+    - wget -N http://chromedriver.storage.googleapis.com/2.43/chromedriver_linux64.zip -P ~/
+    - unzip ~/chromedriver_linux64.zip -d ~/
+    - rm ~/chromedriver_linux64.zip
+    - sudo mv -f ~/chromedriver /usr/local/share/
+    - sudo chmod +x /usr/local/share/chromedriver
 script:
   - pytest
 
