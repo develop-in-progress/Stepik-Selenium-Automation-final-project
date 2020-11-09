@@ -8,6 +8,8 @@ def pytest_addoption(parser):
                      help="Choose browser: chrome or firefox")
     parser.addoption('--language', action='store', default='en',
                      help="Choose language")
+    options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
 
 
 @pytest.fixture(scope="function")
