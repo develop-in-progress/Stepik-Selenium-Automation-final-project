@@ -9,11 +9,18 @@ addons:
 #   firefox: "49.0"
 
 # command to install dependencies
+before_script:
+  - echo $PATH
+  - wget http://chromedriver.storage.googleapis.com/2.24/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python2.7.12/bin/
+  - export CHROME_BIN=chromium-browser
+
+
+
 install:
 
     - pip install -r requirements.txt
-    - wget -N http://chromedriver.storage.googleapis.com/2.43/chromedriver_linux64.zip -P ~/
-    - unzip ~/chromedriver_linux64.zip -d ~/
+
     - rm ~/chromedriver_linux64.zip
     - sudo mv -f ~/chromedriver /usr/local/share/
     - sudo chmod +x /usr/local/share/chromedriver
