@@ -10,6 +10,7 @@ addons:
 
 # command to install dependencies
 before_script:
+  - echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
   - echo $PATH
   - wget http://chromedriver.storage.googleapis.com/2.24/chromedriver_linux64.zip
   - unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python2.7.12/bin/
@@ -20,10 +21,6 @@ before_script:
 install:
 
     - pip install -r requirements.txt
-
-    - rm ~/chromedriver_linux64.zip
-    - sudo mv -f ~/chromedriver /usr/local/share/
-    - sudo chmod +x /usr/local/share/chromedriver
 script:
   - pytest
 
