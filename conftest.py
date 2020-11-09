@@ -18,8 +18,8 @@ def browser(request):
     language = request.config.getoption("language")
     if browser_name == "chrome":
         options = webdriver.ChromeOptions()
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
+        options.add_argument("--no-sandbox");
+        options.add_argument("--disable-dev-shm-usage");
         options.add_experimental_option('prefs', {'intl.accept_languages': language})
         browser = webdriver.Chrome(options=options)
     elif browser_name == "firefox":
