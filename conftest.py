@@ -8,8 +8,7 @@ def pytest_addoption(parser):
                      help="Choose browser: chrome or firefox")
     parser.addoption('--language', action='store', default='en',
                      help="Choose language")
-    options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
+
 
 
 @pytest.fixture(scope="function")
@@ -19,6 +18,8 @@ def browser(request):
     language = request.config.getoption("language")
     if browser_name == "chrome":
         options = Options()
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
         options.add_experimental_option('prefs', {'intl.accept_languages': language})
         browser = webdriver.Chrome(options=options)
     elif browser_name == "firefox":
