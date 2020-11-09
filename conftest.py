@@ -17,7 +17,7 @@ def browser(request):
     browser = None
     language = request.config.getoption("language")
     if browser_name == "chrome":
-        options = Options()
+        options = webdriver.ChromeOptions()
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.add_experimental_option('prefs', {'intl.accept_languages': language})
