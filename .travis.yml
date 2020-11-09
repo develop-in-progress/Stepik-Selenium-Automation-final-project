@@ -11,9 +11,9 @@ addons:
 # command to install dependencies
 before_script:
   - echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-  - echo $PATH
-  - wget http://chromedriver.storage.googleapis.com/2.24/chromedriver_linux64.zip
-  - unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python2.7.12/bin/
+  - echo '$PATH'
+  - wget http://chromedriver.storage.googleapis.com/71.0.3578.80/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python3.6.7//bin/
   - export CHROME_BIN=chromium-browser
 
 
