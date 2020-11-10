@@ -1,9 +1,9 @@
 import pytest
 from selenium import webdriver
-from webdriver_manager.utils import ChromeType
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.options import Options as FFOptions
+from webdriver_manager.utils import ChromeType
 
 
 def pytest_addoption(parser):
@@ -17,7 +17,7 @@ def pytest_addoption(parser):
 def browser(request):
     browser_name = request.config.getoption("browser_name")
     language = request.config.getoption("language")
-    if browser_name == "chrome" or 'chromium':
+    if browser_name == "chrome":
         options = webdriver.ChromeOptions()
         options.add_experimental_option('prefs', {'intl.accept_languages': language})
         options = webdriver.ChromeOptions()
@@ -28,9 +28,6 @@ def browser(request):
         options.add_argument("--headless")
         options.add_argument('--no-sandbox')
         browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-        if browser_name == 'chromium':
-            browser = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install(),
-                                       options=options)
     elif browser_name == "firefox":
         # fp = webdriver.FirefoxProfile()
         # fp.set_preference("intl.accept_languages", language)
