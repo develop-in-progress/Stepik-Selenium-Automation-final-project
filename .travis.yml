@@ -26,6 +26,6 @@ install:
 script:
 
   - sleep 3
-  - pytest -v --browser_name=firefox test_main_page.py
+  - pytest test_main_page.py
 
 
