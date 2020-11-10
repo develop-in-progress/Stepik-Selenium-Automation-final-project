@@ -9,11 +9,15 @@ python:
 # command to run tests
 addons:
   chrome: stable
-#   firefox: "49.0"
 
-before_install:
-    - "export DISPLAY=:99.0"
-    - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+#   firefox: "49.0"
+env:
+  global:
+    - MOZ_HEADLESS=1
+
+#before_install:
+#    - "export DISPLAY=:99.0"
+#    - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 install:
     - pip install -r requirements.txt
 #    - pip install selenium-base
@@ -30,8 +34,8 @@ install:
 
 
 script:
-  - xvfb-run make test
-  - xvfb-run --server-args="-screen 0 1024x768x24" make test
+#  - xvfb-run make test
+#  - xvfb-run --server-args="-screen 0 1024x768x24" make test
   - sleep 3
   - pytest -v --browser_name=firefox test_main_page.py
 
