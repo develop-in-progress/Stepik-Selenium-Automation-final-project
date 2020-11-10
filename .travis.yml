@@ -4,38 +4,27 @@ services:
   - xvfb
 language: python
 python:
+
   - "3.6"      # current default Python on Travis CI
 
-# command to run tests
 addons:
   chrome: stable
 
-#   firefox: "49.0"
-env:
-  global:
-    - MOZ_HEADLESS=1
+#env:
+#  global:
+#    - MOZ_HEADLESS=1
 
+# Start with GUI
 #before_install:
 #    - "export DISPLAY=:99.0"
 #    - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 install:
     - pip install -r requirements.txt
-#    - pip install selenium-base
-#    - seleniumbase install chromedriver
-#    - sudo mv -f /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages/seleniumbase/drivers/chromedriver /usr/local/bin/chromedriver
-    - sleep 3
     - sudo apt-get install chromium-browser
     - sudo apt-get install firefox
 
-#before_script:
-#  - export DISPLAY=:99.0
-#  - sh -e /etc/init.d/xvfb start
-#  - sleep 3 # give xvfb some time to start
-
-
 script:
-#  - xvfb-run make test
-#  - xvfb-run --server-args="-screen 0 1024x768x24" make test
+
   - sleep 3
   - pytest -v --browser_name=firefox test_main_page.py
 
