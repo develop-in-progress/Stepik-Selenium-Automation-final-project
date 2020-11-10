@@ -1,9 +1,10 @@
 import pytest
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from webdriver_manager.utils import ChromeType
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.options import Options as FFOptions
+
 
 def pytest_addoption(parser):
     parser.addoption('--browser_name', action='store', default='chrome',
@@ -12,12 +13,11 @@ def pytest_addoption(parser):
                      help="Choose language")
 
 
-
 @pytest.fixture(scope="function")
 def browser(request):
     browser_name = request.config.getoption("browser_name")
     language = request.config.getoption("language")
-    if browser_name == "chrome":
+    if browser_name == "chrome" or 'chromium':
         options = webdriver.ChromeOptions()
         options.add_experimental_option('prefs', {'intl.accept_languages': language})
         options = webdriver.ChromeOptions()
@@ -27,7 +27,10 @@ def browser(request):
         options.add_argument("--disable-default-apps")
         options.add_argument("--headless")
         options.add_argument('--no-sandbox')
-        browser = webdriver.Chrome(ChromeDriverManager().install(),options=options)
+        browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+        if browser_name == 'chromium':
+            browser = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install(),
+                                       options=options)
     elif browser_name == "firefox":
         # fp = webdriver.FirefoxProfile()
         # fp.set_preference("intl.accept_languages", language)
@@ -35,6 +38,7 @@ def browser(request):
         options = FFOptions()
         options.headless = True
         browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=options)
+
     else:
         raise pytest.UsageError("--browser_name should be chrome or firefox")
     yield browser
