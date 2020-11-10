@@ -25,7 +25,7 @@ install:
 
 script:
 
-  - sleep 3
-  - pytest test_main_page.py
+
+  - pytest
 
 
