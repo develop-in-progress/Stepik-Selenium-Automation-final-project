@@ -16,6 +16,7 @@ install:
     - seleniumbase install chromedriver
     - sudo mv -f /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages/seleniumbase/drivers/chromedriver /usr/local/bin/chromedriver
     - sleep 3
+    - sudo apt-get install chromium-browser
 
 
 script:
