@@ -20,6 +20,6 @@ install:
 
 
 script:
-  - pytest
+  - pytest -v --browser_name=firefox test_main_page.py
 
 
