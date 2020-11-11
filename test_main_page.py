@@ -8,12 +8,16 @@ import pytest
 
 @pytest.mark.login_guest
 class TestLoginFromMainPage:
+    @allure.severity(allure.severity_level.BLOCKER)
+    @allure.story('Guest can see login link')
     def test_guest_should_see_login_link(self, browser):
         link = "http://selenium1py.pythonanywhere.com/"
         page = MainPage(browser, link)
         page.open()
         page.should_be_login_link()
 
+    @allure.severity(allure.severity_level.BLOCKER)
+    @allure.story('Guest can see login form')
     def test_guest_should_see_login_form(self, browser):
         link = 'http://selenium1py.pythonanywhere.com/accounts/login/'
         page = LoginPage(browser, link)
