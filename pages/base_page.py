@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from .locators import BasePageLocators
 import math
 import allure
-import allure_pytest
+from allure_commons.types import AttachmentType
 
 
 class BasePage:
@@ -61,6 +61,8 @@ class BasePage:
 
     @allure.step('Check login link presense')
     def should_be_login_link(self):
+        with allure.step('Screenshot'):
+            allure.attach(self.browser.get_screenchot_as_png, name='scr', attachment_type=AttachmentType.PNG)
         assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not presented"
 
     @allure.step('Check authorized user')
