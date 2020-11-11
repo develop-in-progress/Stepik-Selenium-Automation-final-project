@@ -5,6 +5,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from .locators import BasePageLocators
 import math
+import allure
+import allure_pytest
 
 
 class BasePage:
@@ -14,6 +16,7 @@ class BasePage:
         self.browser.implicitly_wait(timeout)
 
     def open(self):
+        @allure.step('Step with placeholders in the title, positional: "{0}", keyword: "{key}"')
         return self.browser.get(self.url)
 
     def is_element_present(self, how, what):

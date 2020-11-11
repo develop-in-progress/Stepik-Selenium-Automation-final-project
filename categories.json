@@ -1,0 +1,12 @@
+[
+{
+"name": "Устаревшие тесты (селекторы)",
+"messageRegex": ".*Unable to locate element.*",
+"matchedStatuses": ["broken"]
+},
+{
+"name": "Проблемы в кластере браузеров",
+"messageRegex": ".*Timed out .* from renderer.*",
+"matchedStatuses": ["broken"]
+}
+]
