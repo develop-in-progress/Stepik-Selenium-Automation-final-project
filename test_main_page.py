@@ -8,10 +8,9 @@ import pytest
 
 @pytest.mark.login_guest
 class TestLoginFromMainPage:
-    @allure.step('Test step')
+    # @allure.step('Test step')
     def test_guest_should_see_login_link(self, browser):
         link = "http://selenium1py.pythonanywhere.com/"
-        @allure.step('Test step')
         page = MainPage(browser, link)
         page.open()
         page.should_be_login_link()

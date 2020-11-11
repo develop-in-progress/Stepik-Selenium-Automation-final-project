@@ -15,8 +15,9 @@ class BasePage:
         self.url = url
         self.browser.implicitly_wait(timeout)
 
+
+    # @allure.step('Step with placeholders in the title, positional: "{0}", keyword: "{key}"')
     def open(self):
-        @allure.step('Step with placeholders in the title, positional: "{0}", keyword: "{key}"')
         return self.browser.get(self.url)
 
     def is_element_present(self, how, what):
