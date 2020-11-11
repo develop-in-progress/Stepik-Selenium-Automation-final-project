@@ -62,7 +62,7 @@ class BasePage:
     @allure.step('Check login link presense')
     def should_be_login_link(self):
         with allure.step('Screenshot'):
-            allure.attach(self.browser.get_screenshot_as_png, name='scr', attachment_type=AttachmentType.PNG)
+            allure.attach(self.browser.get_screenshot_as_png(), name='scr', attachment_type=AttachmentType.PNG)
         assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not presented"
 
     @allure.step('Check authorized user')

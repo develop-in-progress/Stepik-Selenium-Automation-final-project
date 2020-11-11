@@ -16,13 +16,13 @@ class LoginPage(BasePage):
     @allure.step('Login url is shown on the Login page')
     def should_be_login_url(self):
         with allure.step('Screenshot'):
-            allure.attach(self.browser.get_screenshot_as_png, name='scr', attachment_type=AttachmentType.PNG)
+            allure.attach(self.browser.get_screenshot_as_png(), name='scr', attachment_type=AttachmentType.PNG)
         assert self.browser.current_url == LoginPageLocators.LOGIN_LINK, 'Url is not the login page\'s url'
 
     @allure.step('Login form is shown on the Login page')
     def should_be_login_form(self):
         with allure.step('Screenshot'):
-            allure.attach(self.browser.get_screenshot_as_png, name='scr', attachment_type=AttachmentType.PNG)
+            allure.attach(self.browser.get_screenshot_as_png(), name='scr', attachment_type=AttachmentType.PNG)
         assert self.is_element_present(*LoginPageLocators.LOGIN_FORM), \
             'There is no login form on the Login page'
 
