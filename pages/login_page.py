@@ -4,6 +4,7 @@ import time
 import allure
 
 
+@allure.step('Creating login page')
 class LoginPage(BasePage):
 
     def should_be_login_page(self):

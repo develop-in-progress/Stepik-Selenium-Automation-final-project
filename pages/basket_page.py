@@ -3,6 +3,7 @@ from .locators import BasketPageLocators
 import allure
 
 
+@allure.step('Creating basket page')
 class BasketPage(BasePage):
     link = 'http://selenium1py.pythonanywhere.com/ru/basket/'
 
