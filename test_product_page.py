@@ -5,6 +5,7 @@ import pytest
 from pages.login_page import LoginPage
 
 
+@pytest.mark.skip
 @pytest.mark.parametrize('link', ProductPageLocators.PARAMETRIZE_LINKS)
 @pytest.mark.need_review
 def test_guest_can_add_product_to_basket(browser, link):
