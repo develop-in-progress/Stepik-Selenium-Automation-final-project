@@ -15,8 +15,7 @@ class BasePage:
         self.url = url
         self.browser.implicitly_wait(timeout)
 
-
-    # @allure.step('Step with placeholders in the title, positional: "{0}", keyword: "{key}"')
+    @allure.step('Open page')
     def open(self):
         return self.browser.get(self.url)
 
@@ -60,9 +59,11 @@ class BasePage:
         link = self.browser.find_element(*BasePageLocators.LOGIN_LINK)
         link.click()
 
+    @allure.step('Check login link presense')
     def should_be_login_link(self):
         assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not presented"
 
+    @allure.step('Check authorized user')
     def should_be_authorized_user(self):
         assert self.is_element_present(*BasePageLocators.USER_ICON), "User icon is not presented," \
                                                                      " probably unauthorised user"
