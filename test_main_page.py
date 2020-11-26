@@ -7,18 +7,19 @@ import pytest
 
 @pytest.mark.login_guest
 class TestLoginFromMainPage:
+
     def test_guest_should_see_login_link(self, browser):
         link = "http://selenium1py.pythonanywhere.com/"
-        page = MainPage(browser, link)
-        page.open()
-        page.should_be_login_link()
+        self.page = MainPage(browser, link)
+        self.page.open()
+        self.page.should_be_login_link()
 
     def test_guest_should_see_login_form(self, browser):
         link = 'http://selenium1py.pythonanywhere.com/accounts/login/'
-        page = LoginPage(browser, link)
-        page.open()
-        page.should_be_login_form()
-        page.should_be_login_url()
+        self.page = LoginPage(browser, link)
+        self.page.open()
+        self.page.should_be_login_form()
+        self.page.should_be_login_url()
 
 
 def test_guest_cant_see_product_in_basket_opened_from_main_page(browser):
@@ -37,3 +38,4 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     page = BasketPage(browser, browser.current_url)
     page.click_basket_button()
     page.basket_should_be_empty_text_is_presented()
+
