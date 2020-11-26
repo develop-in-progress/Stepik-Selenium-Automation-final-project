@@ -5,8 +5,7 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.options import Options as FFOptions
-from webdriver_manager.utils import ChromeType
-from allure_commons.types import AttachmentType
+import datetime
 
 
 def pytest_addoption(parser):
@@ -15,21 +14,6 @@ def pytest_addoption(parser):
     parser.addoption('--language', action='store', default='en',
                      help="Choose language")
 
-
-# @pytest.hookimpl(tryfirst=True, hookwrapper=True)
-# def pytest_runtest_makereport(item, call):
-#     # execute all other hooks to obtain the report object
-#     outcome = yield
-#     rep = outcome.get_result()
-#
-#     # we only look at actual failing test calls, not setup/teardown
-#     if rep.when == "call" and rep.failed:
-#         try:
-#             allure.attach(browser.get_screenshot_as_png(),
-#                           name='Screenshot',
-#                           attachment_type=allure.attachment_type.PNG)
-#         except Exception as e:
-#             print('Oh no, there is Exception attack ur code: ', e)
 
 
 @pytest.fixture(scope="function")
@@ -75,40 +59,10 @@ def pytest_runtest_makereport(item, call):
             )
         except Exception as e:
             print('Fail to take screen-shot: {}'.format(e))
-#
-# @pytest.hookimpl(tryfirst=True, hookwrapper=True)
-# def pytest_runtest_makereport(item, call):
-#     # execute all other hooks to obtain the report object
-#     outcome = yield
-#     rep = outcome.get_result()
-#
-#     # we only look at actual failing test calls, not setup/teardown
-#     if rep.when == "call" and rep.failed:
-#         pass
-# @pytest.mark.hookwrapper
-# def pytest_runtest_makereport(item, call):
-#     outcome = yield
-#     report = outcome.get_result()
-#     if report.when == 'call':
-#         if report.failed:
-#                 try:
-#                     allure.attach(item.instance.browser.get_screenshot_as_png(),
-#                                   name=item.name,
-#                                   attachment_type=AttachmentType.PNG)
-#                 except Exception as e:
-#                     print('Allure error: ', e)
-
-# @pytest.hookimpl(hookwrapper=True, tryfirst=True)
-# def pytest_runtest_makereport(item):
-#     outcome = yield
-#     rep = outcome.get_result()
-#     marker = item.get_closest_marker("ui")
-#     marker = True
-#     if marker:
-#         # if rep.when == "call" and rep.failed:  # we only look at actual failing test calls, not setup/teardown
-#             try:
-#                 allure.attach(item.instance.browser.get_screenshot_as_png(),
-#                               name=item.name,
-#                               attachment_type=allure.attachment_type.PNG)
-#             except Exception as e:
-#                 print(e)
+        try:  # Just to not crash py.test reporting
+            log = os.path.dirname(os.path.abspath(__file__))
+            with open(str(os.path.join(log, 'logging.txt')), "a") as f:
+                f.write(str(datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")) + "\n" + rep.longreprtext)
+        except Exception as e:
+            print("ERROR", e)
+            pass
