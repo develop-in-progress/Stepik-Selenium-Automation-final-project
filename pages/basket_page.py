@@ -13,7 +13,4 @@ class BasketPage(BasePage):
         message_text = self.browser.find_element(*BasketPageLocators.BASKET_MESSAGE)
         message_text = message_text.text
         assert message_text == BasketPageLocators.EMPTY_TEXT, \
-            'Текст о том что корзина пуста не отображен'
-
-
-
+            'Текст о том что корзина пуста не отображен : {}'.format(message_text)

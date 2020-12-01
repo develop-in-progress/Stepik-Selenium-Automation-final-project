@@ -38,7 +38,14 @@ def browser(request):
         options = FFOptions()
         options.headless = True
         browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=options)
-
+    elif browser_name == 'grid_chrome':
+        browser = webdriver.Remote(
+            command_executor='http://10.5.0.16:4444/wd/hub',
+            desired_capabilities={
+                'browserName': 'firefox',
+                'version': '',
+                'platform': 'LINUX'})
+        # or use caps = webdriver.DesiredCapabilities.CHROME.copy()
     else:
         raise pytest.UsageError("--browser_name should be chrome or firefox")
     yield browser
@@ -64,5 +71,5 @@ def pytest_runtest_makereport(item, call):
             with open(str(os.path.join(log, 'logging.txt')), "a") as f:
                 f.write(str(datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")) + "\n" + rep.longreprtext)
         except Exception as e:
-            print("ERROR", e)
+            print("Logging err: ", e)
             pass
