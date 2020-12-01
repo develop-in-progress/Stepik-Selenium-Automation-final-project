@@ -6,6 +6,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.options import Options as FFOptions
 import datetime
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 def pytest_addoption(parser):
@@ -13,7 +14,6 @@ def pytest_addoption(parser):
                      help="Choose browser: chrome or firefox")
     parser.addoption('--language', action='store', default='en',
                      help="Choose language")
-
 
 
 @pytest.fixture(scope="function")
@@ -38,13 +38,18 @@ def browser(request):
         options = FFOptions()
         options.headless = True
         browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=options)
+    elif browser_name == 'grid_firefox':
+        browser = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            desired_capabilities=DesiredCapabilities.FIREFOX)
     elif browser_name == 'grid_chrome':
         browser = webdriver.Remote(
-            command_executor='http://10.5.0.16:4444/wd/hub',
-            desired_capabilities={
-                'browserName': 'firefox',
-                'version': '',
-                'platform': 'LINUX'})
+            command_executor='http://localhost:4444/wd/hub',
+            desired_capabilities=DesiredCapabilities.CHROME)
+            # {
+            #     'browserName': browser_name_for_grid,
+            #     'version': '',
+            #     'platform': 'LINUX'})
         # or use caps = webdriver.DesiredCapabilities.CHROME.copy()
     else:
         raise pytest.UsageError("--browser_name should be chrome or firefox")
