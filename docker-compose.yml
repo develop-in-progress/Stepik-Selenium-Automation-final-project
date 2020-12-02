@@ -18,6 +18,12 @@ firefoxnode:
   links:
     - seleniumhub:hub
 
+python3:
+  image: python
+  container_name: python3
+  ports:
+    - 55555
+
 jenkins:
   image: jenkins/jenkins:lts
   privileged: true
@@ -28,3 +34,5 @@ jenkins:
   container_name: jenkins
   volumes:
     - jenkins-home:/var/jenkins_home
+  links:
+    - python3

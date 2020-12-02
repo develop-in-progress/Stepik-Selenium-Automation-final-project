@@ -14,16 +14,27 @@ def pytest_addoption(parser):
                      help="Choose browser: chrome or firefox")
     parser.addoption('--language', action='store', default='en',
                      help="Choose language")
+    parser.addoption('--grid', action='store', default=[DesiredCapabilities.FIREFOX, DesiredCapabilities.CHROME],
+                     help="Choose language")
 
 
-@pytest.fixture(scope="function")
+def pytest_generate_tests(metafunc):
+    if "grid" in metafunc.fixturenames:
+        metafunc.parametrize("grid", metafunc.config.getoption("grid"))
+
+
+# @pytest.fixture(scope="function", params=[
+#         ('Chrome_for_grid', DesiredCapabilities.CHROME),
+#         ('Firefox_for_grid', DesiredCapabilities.FIREFOX)
+#     ])
+@pytest.fixture
 def browser(request):
     browser_name = request.config.getoption("browser_name")
     language = request.config.getoption("language")
+    grid = request.config.getoption("grid")
     if browser_name == "chrome":
         options = webdriver.ChromeOptions()
         options.add_experimental_option('prefs', {'intl.accept_languages': language})
-        options = webdriver.ChromeOptions()
         options.add_argument("--no-sandbox")  # This make Chromium reachable
         options.add_argument("--no-default-browser-check")  # Overrides default choices
         options.add_argument("--no-first-run")
@@ -32,12 +43,20 @@ def browser(request):
         options.add_argument('--no-sandbox')
         browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     elif browser_name == "firefox":
-        # fp = webdriver.FirefoxProfile()
-        # fp.set_preference("intl.accept_languages", language)
-        # browser = webdriver.Firefox(firefox_profile=fp)
         options = FFOptions()
-        options.headless = True
+        # options.headless = True
         browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=options)
+    elif browser_name == 'grid':
+        # browser = webdriver.Remote(
+        #     command_executor='http://localhost:4444/wd/hub',
+        #     desired_capabilities=request.param[1]).
+        browser = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            desired_capabilities=None)
+    elif grid == "grid":
+        browser = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            desired_capabilities=request.param[1])
     elif browser_name == 'grid_firefox':
         browser = webdriver.Remote(
             command_executor='http://localhost:4444/wd/hub',
@@ -46,11 +65,6 @@ def browser(request):
         browser = webdriver.Remote(
             command_executor='http://localhost:4444/wd/hub',
             desired_capabilities=DesiredCapabilities.CHROME)
-            # {
-            #     'browserName': browser_name_for_grid,
-            #     'version': '',
-            #     'platform': 'LINUX'})
-        # or use caps = webdriver.DesiredCapabilities.CHROME.copy()
     else:
         raise pytest.UsageError("--browser_name should be chrome or firefox")
     yield browser
