@@ -7,6 +7,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.options import Options as FFOptions
 import datetime
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+import sys
 
 
 def pytest_addoption(parser):
@@ -14,24 +15,74 @@ def pytest_addoption(parser):
                      help="Choose browser: chrome or firefox")
     parser.addoption('--language', action='store', default='en',
                      help="Choose language")
-    parser.addoption('--grid', action='store', default=[DesiredCapabilities.FIREFOX, DesiredCapabilities.CHROME],
-                     help="Choose language")
+    parser.addoption("--grid", action="store", default=None)
 
 
-def pytest_generate_tests(metafunc):
-    if "grid" in metafunc.fixturenames:
-        metafunc.parametrize("grid", metafunc.config.getoption("grid"))
+#
+# def get_grid_driver_chrome():
+#     browser = webdriver.Remote(
+#                 command_executor='http://localhost:4444/wd/hub',
+#                 desired_capabilities=DesiredCapabilities.CHROME)
+#     yield browser
+#     browser.quit()
+#
+#
+# def get_grid_driver_firefox():
+#     browser = webdriver.Remote(
+#         command_executor='http://localhost:4444/wd/hub',
+#         desired_capabilities=DesiredCapabilities.FIREFOX)
+#     yield browser
+#     browser.quit()
+#
+# f = get_grid_driver_firefox()
+#
+#
+# def pytest_generate_tests(metafunc):
+#     # This is called for every test. Only get/set command line arguments
+#     # if the argument is specified in the list of test "fixturenames".
+#     option_value = metafunc.config.option.grid
+#     if 'browser' in metafunc.fixturenames and option_value is not None:
+#         metafunc.parametrize("browser", [
+#             get_grid_driver_chrome(),
+#             f]
+#                              )
 
 
-# @pytest.fixture(scope="function", params=[
-#         ('Chrome_for_grid', DesiredCapabilities.CHROME),
-#         ('Firefox_for_grid', DesiredCapabilities.FIREFOX)
-#     ])
-@pytest.fixture
+# def caps():
+#     return [DesiredCapabilities.CHROME, DesiredCapabilities.FIREFOX]
+
+
+#
+# def return_browser_name(request):
+#     print('---'*33)
+#     print(request.config.getoption("browser_name"))
+#     browser = request.config.getoption("browser_name")
+#     return browser
+
+
+# @pytest.fixture(params=caps() if 'grid' in  else ['only_one_browser_will_init'])
+# @pytest.fixture(params=caps())
+# def get_caps(request):
+#     return request.param
+
+
+params = [('Chrome_for_grid', DesiredCapabilities.CHROME),
+          ('Firefox_for_grid', DesiredCapabilities.FIREFOX)]
+
+
+@pytest.fixture()
+def return_browser_name(request):
+    browser = request.config.getoption("browser_name")
+    return browser
+
+
+s = return_browser_name
+
+
+@pytest.fixture(scope="function", params=params)
 def browser(request):
     browser_name = request.config.getoption("browser_name")
     language = request.config.getoption("language")
-    grid = request.config.getoption("grid")
     if browser_name == "chrome":
         options = webdriver.ChromeOptions()
         options.add_experimental_option('prefs', {'intl.accept_languages': language})
@@ -47,16 +98,12 @@ def browser(request):
         # options.headless = True
         browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=options)
     elif browser_name == 'grid':
-        # browser = webdriver.Remote(
-        #     command_executor='http://localhost:4444/wd/hub',
-        #     desired_capabilities=request.param[1]).
-        browser = webdriver.Remote(
-            command_executor='http://localhost:4444/wd/hub',
-            desired_capabilities=None)
-    elif grid == "grid":
         browser = webdriver.Remote(
             command_executor='http://localhost:4444/wd/hub',
             desired_capabilities=request.param[1])
+        # browser = webdriver.Remote(
+        #     command_executor='http://localhost:4444/wd/hub',
+        #     desired_capabilities=get_caps)
     elif browser_name == 'grid_firefox':
         browser = webdriver.Remote(
             command_executor='http://localhost:4444/wd/hub',

@@ -1,38 +1,32 @@
-seleniumhub:
-  image: selenium/hub
-  ports:
-    - 4444:4444
+  seleniumhub:
+    image: selenium/hub
+    ports:
+      - 4444:4444
 
-chromenode:
-  image: selenium/node-chrome-debug
-  ports:
-    - 33333
-  links:
-    - seleniumhub:hub
+  chromenode:
+    image: selenium/node-chrome-debug
+    ports:
+      - 33333
+    links:
+      - seleniumhub:hub
 
 
-firefoxnode:
-  image: selenium/node-firefox-debug
-  ports:
-    - 33334
-  links:
-    - seleniumhub:hub
+  firefoxnode:
+    image: selenium/node-firefox-debug
+    ports:
+      - 33334
+    links:
+      - seleniumhub:hub
 
-python3:
-  image: python
-  container_name: python3
-  ports:
-    - 55555
 
-jenkins:
-  image: jenkins/jenkins:lts
-  privileged: true
-  user: root
-  ports:
-    - 8080:8080
-    - 50000:50000
-  container_name: jenkins
-  volumes:
-    - jenkins-home:/var/jenkins_home
-  links:
-    - python3
+  jenkins:
+    image: zasados/jenkins-python3.6
+    privileged: true
+    user: root
+    ports:
+      - 8080:8080
+      - 50000:50000
+    container_name: jenkins
+    volumes:
+      - jenkins-home:/var/jenkins_home
+
