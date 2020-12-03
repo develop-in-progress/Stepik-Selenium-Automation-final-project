@@ -10,12 +10,20 @@ services:
       - 33333
     links:
       - seleniumhub:hub
+    depends_on:
+      - seleniumhub
+    environment:
+      HUB_HOST: seleniumhub
   firefoxnode:
     image: selenium/node-firefox-debug
     ports:
       - 33334
     links:
       - seleniumhub:hub
+    depends_on:
+      - seleniumhub
+    environment:
+      HUB_HOST: seleniumhub
   jenkins:
     image: zasados/jenkins-python3.6
     privileged: true
