@@ -4,123 +4,52 @@ import pytest
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
-from selenium.webdriver.firefox.options import Options as FFOptions
 import datetime
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-import sys
 
 
-def pytest_addoption(parser):
-    parser.addoption('--browser_name', action='store', default='chrome',
+def pytest_addoption(parser): # default='chrome',
+    parser.addoption('--browser_name', action='store',
                      help="Choose browser: chrome or firefox")
     parser.addoption('--language', action='store', default='en',
                      help="Choose language")
-    parser.addoption("--grid", action="store", default=None)
+    parser.addoption("--grid", action="store", help="runs all tests in Selenium Grid in parralel")
 
 
-#
-# def get_grid_driver_chrome():
-#     browser = webdriver.Remote(
-#                 command_executor='http://localhost:4444/wd/hub',
-#                 desired_capabilities=DesiredCapabilities.CHROME)
-#     yield browser
-#     browser.quit()
-#
-#
-# def get_grid_driver_firefox():
-#     browser = webdriver.Remote(
-#         command_executor='http://localhost:4444/wd/hub',
-#         desired_capabilities=DesiredCapabilities.FIREFOX)
-#     yield browser
-#     browser.quit()
-#
-# f = get_grid_driver_firefox()
-#
-#
-# def pytest_generate_tests(metafunc):
-#     # This is called for every test. Only get/set command line arguments
-#     # if the argument is specified in the list of test "fixturenames".
-#     option_value = metafunc.config.option.grid
-#     if 'browser' in metafunc.fixturenames and option_value is not None:
-#         metafunc.parametrize("browser", [
-#             get_grid_driver_chrome(),
-#             f]
-#                              )
+def pytest_generate_tests(metafunc):
+    try:
+        if "browser" in metafunc.fixturenames and metafunc.config.getoption("browser_name") == 'grid':
+            metafunc.parametrize("browser", ['grid_firefox', 'grid_chrome'], indirect=True)
+    except ValueError as e:
+        pass
 
 
-# def caps():
-#     return [DesiredCapabilities.CHROME, DesiredCapabilities.FIREFOX]
-
-
-#
-# def return_browser_name(request):
-#     print('---'*33)
-#     print(request.config.getoption("browser_name"))
-#     browser = request.config.getoption("browser_name")
-#     return browser
-
-
-# @pytest.fixture(params=caps() if 'grid' in  else ['only_one_browser_will_init'])
-# @pytest.fixture(params=caps())
-# def get_caps(request):
-#     return request.param
-
-
-
-
-params = [('chrome', DesiredCapabilities.CHROME),
-          ('firefox', DesiredCapabilities.FIREFOX)]
-
-
-@pytest.fixture()
-def return_browser_name(request):
-    browser = request.config.getoption("browser_name")
-    return browser
-
-
-s = return_browser_name
-
-
-@pytest.fixture(scope="function", params=params)
+@pytest.fixture
 def browser(request):
     browser_name = request.config.getoption("browser_name")
     language = request.config.getoption("language")
-    firefox_profile = webdriver.FirefoxProfile()
-    firefox_profile.set_preference("intl.accept_languages", language)
-    firefox_profile.update_preferences()
+    firefox_opts = webdriver.FirefoxProfile()
+    firefox_opts.set_preference("intl.accept_languages", language)
     options = webdriver.ChromeOptions()
     options.add_experimental_option('prefs', {'intl.accept_languages': language})
     options.add_argument("--no-sandbox")  # This make Chromium reachable
     options.add_argument("--no-default-browser-check")  # Overrides default choices
     options.add_argument("--no-first-run")
     options.add_argument("--disable-default-apps")
-    # options.add_argument("--headless")
     options.add_argument('--no-sandbox')
+    # options.add_argument("--headless")
     if browser_name == "chrome":
         browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     elif browser_name == "firefox":
-        # options.headless = True
-        browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), firefox_profile=firefox_profile)
-    elif browser_name == 'grid':  # Different address for access to Grid in docker for jenkins
-        if request.param[0] == 'firefox':
-            opts = firefox_profile
-            browser = webdriver.Remote(
-                command_executor='http://seleniumhub:4444/wd/hub',
-                desired_capabilities=request.param[1], browser_profile=opts)
-        elif request.param[0] == 'chrome':
-            opts = options
-            browser = webdriver.Remote(
-                command_executor='http://seleniumhub:4444/wd/hub',
-                desired_capabilities=request.param[1], options=opts)
-        #     command_executor='http://seleniumhub:4444/wd/hub',
-    elif browser_name == 'grid_firefox':
+        browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), firefox_profile=firefox_opts)
+    elif browser_name == 'grid_firefox' or request.param == 'grid_firefox':
+        browser = webdriver.Remote(   # Different url for access to Grid in docker for jenkins
+            command_executor='http://localhost:4444/wd/hub',   # command_executor='http://seleniumhub:4444/wd/hub'
+            desired_capabilities=DesiredCapabilities.FIREFOX, browser_profile=firefox_opts)
+    elif browser_name == 'grid_chrome' or request.param == 'grid_chrome':
         browser = webdriver.Remote(
             command_executor='http://localhost:4444/wd/hub',
-            desired_capabilities=DesiredCapabilities.FIREFOX)
-    elif browser_name == 'grid_chrome':
-        browser = webdriver.Remote(
-            command_executor='http://localhost:4444/wd/hub',
-            desired_capabilities=DesiredCapabilities.CHROME)
+            desired_capabilities=DesiredCapabilities.CHROME, options=options)
     else:
         raise pytest.UsageError("--browser_name should be chrome or firefox")
     yield browser
