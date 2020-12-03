@@ -99,7 +99,7 @@ def browser(request):
         browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=options)
     elif browser_name == 'grid':
         browser = webdriver.Remote(
-            command_executor='seleniumhub',
+            command_executor='http://seleniumhub:4444/wd/hub',
             desired_capabilities=request.param[1])
         # browser = webdriver.Remote(
         #     command_executor='http://localhost:4444/wd/hub',
