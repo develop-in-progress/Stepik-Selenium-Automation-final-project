@@ -66,6 +66,8 @@ def pytest_addoption(parser):
 #     return request.param
 
 
+
+
 params = [('chrome', DesiredCapabilities.CHROME),
           ('firefox', DesiredCapabilities.FIREFOX)]
 
@@ -97,17 +99,20 @@ def browser(request):
     if browser_name == "chrome":
         browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     elif browser_name == "firefox":
-        options = firefox_profile
         # options.headless = True
-        browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=options)
+        browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), firefox_profile=firefox_profile)
     elif browser_name == 'grid':
-        browser = webdriver.Remote(
-            command_executor='http://seleniumhub:4444/wd/hub',
-            desired_capabilities=request.param[1], browser_profile=firefox_profile
-            if request.param[0] == 'firefox' else options)
-        # browser = webdriver.Remote(
-        #     command_executor='http://localhost:4444/wd/hub',
-        #     desired_capabilities=get_caps)
+        if request.param[0] == 'firefox':
+            opts = firefox_profile
+            browser = webdriver.Remote(
+                command_executor='http://localhost:4444/wd/hub',
+                desired_capabilities=request.param[1], browser_profile=opts)
+        elif request.param[0] == 'chrome':
+            opts = options
+            browser = webdriver.Remote(
+                command_executor='http://seleniumhub:4444/wd/hub',
+                desired_capabilities=request.param[1], options=opts)
+        #     command_executor='http://seleniumhub:4444/wd/hub',
     elif browser_name == 'grid_firefox':
         browser = webdriver.Remote(
             command_executor='http://localhost:4444/wd/hub',
