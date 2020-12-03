@@ -66,8 +66,8 @@ def pytest_addoption(parser):
 #     return request.param
 
 
-params = [('Chrome_for_grid', DesiredCapabilities.CHROME),
-          ('Firefox_for_grid', DesiredCapabilities.FIREFOX)]
+params = [('chrome', DesiredCapabilities.CHROME),
+          ('firefox', DesiredCapabilities.FIREFOX)]
 
 
 @pytest.fixture()
@@ -104,7 +104,7 @@ def browser(request):
         browser = webdriver.Remote(
             command_executor='http://seleniumhub:4444/wd/hub',
             desired_capabilities=request.param[1], browser_profile=firefox_profile
-            if request.param[1] == DesiredCapabilities.FIREFOX else options)
+            if request.param[0] == 'firefox' else options)
         # browser = webdriver.Remote(
         #     command_executor='http://localhost:4444/wd/hub',
         #     desired_capabilities=get_caps)
