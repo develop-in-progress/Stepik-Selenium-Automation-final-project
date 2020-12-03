@@ -101,11 +101,11 @@ def browser(request):
     elif browser_name == "firefox":
         # options.headless = True
         browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), firefox_profile=firefox_profile)
-    elif browser_name == 'grid':
+    elif browser_name == 'grid':  # Different address for access to Grid in docker for jenkins
         if request.param[0] == 'firefox':
             opts = firefox_profile
             browser = webdriver.Remote(
-                command_executor='http://localhost:4444/wd/hub',
+                command_executor='http://seleniumhub:4444/wd/hub',
                 desired_capabilities=request.param[1], browser_profile=opts)
         elif request.param[0] == 'chrome':
             opts = options
