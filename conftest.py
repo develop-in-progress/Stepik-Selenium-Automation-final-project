@@ -83,6 +83,9 @@ s = return_browser_name
 def browser(request):
     browser_name = request.config.getoption("browser_name")
     language = request.config.getoption("language")
+    firefox_profile = webdriver.FirefoxProfile()
+    firefox_profile.set_preference("intl.accept_languages", language)
+    firefox_profile.update_preferences()
     if browser_name == "chrome":
         options = webdriver.ChromeOptions()
         options.add_experimental_option('prefs', {'intl.accept_languages': language})
@@ -94,13 +97,14 @@ def browser(request):
         options.add_argument('--no-sandbox')
         browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     elif browser_name == "firefox":
-        options = FFOptions()
+        options = firefox_profile
         # options.headless = True
         browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=options)
     elif browser_name == 'grid':
         browser = webdriver.Remote(
             command_executor='http://seleniumhub:4444/wd/hub',
-            desired_capabilities=request.param[1])
+            desired_capabilities=request.param[1], browser_profile=firefox_profile
+            if request.param[1] == DesiredCapabilities.FIREFOX else None)
         # browser = webdriver.Remote(
         #     command_executor='http://localhost:4444/wd/hub',
         #     desired_capabilities=get_caps)
