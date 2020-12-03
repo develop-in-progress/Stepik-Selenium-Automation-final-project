@@ -1,24 +1,21 @@
+version: "3"
+services:
   seleniumhub:
     image: selenium/hub
     ports:
       - 4444:4444
-
   chromenode:
     image: selenium/node-chrome-debug
     ports:
       - 33333
     links:
       - seleniumhub:hub
-
-
   firefoxnode:
     image: selenium/node-firefox-debug
     ports:
       - 33334
     links:
       - seleniumhub:hub
-
-
   jenkins:
     image: zasados/jenkins-python3.6
     privileged: true
@@ -28,5 +25,5 @@
       - 50000:50000
     container_name: jenkins
     volumes:
-      - jenkins-home:/var/jenkins_home
+      - .:/var/jenkins_home
 
