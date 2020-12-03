@@ -86,15 +86,15 @@ def browser(request):
     firefox_profile = webdriver.FirefoxProfile()
     firefox_profile.set_preference("intl.accept_languages", language)
     firefox_profile.update_preferences()
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option('prefs', {'intl.accept_languages': language})
+    options.add_argument("--no-sandbox")  # This make Chromium reachable
+    options.add_argument("--no-default-browser-check")  # Overrides default choices
+    options.add_argument("--no-first-run")
+    options.add_argument("--disable-default-apps")
+    # options.add_argument("--headless")
+    options.add_argument('--no-sandbox')
     if browser_name == "chrome":
-        options = webdriver.ChromeOptions()
-        options.add_experimental_option('prefs', {'intl.accept_languages': language})
-        options.add_argument("--no-sandbox")  # This make Chromium reachable
-        options.add_argument("--no-default-browser-check")  # Overrides default choices
-        options.add_argument("--no-first-run")
-        options.add_argument("--disable-default-apps")
-        # options.add_argument("--headless")
-        options.add_argument('--no-sandbox')
         browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     elif browser_name == "firefox":
         options = firefox_profile
@@ -104,7 +104,7 @@ def browser(request):
         browser = webdriver.Remote(
             command_executor='http://seleniumhub:4444/wd/hub',
             desired_capabilities=request.param[1], browser_profile=firefox_profile
-            if request.param[1] == DesiredCapabilities.FIREFOX else None)
+            if request.param[1] == DesiredCapabilities.FIREFOX else options)
         # browser = webdriver.Remote(
         #     command_executor='http://localhost:4444/wd/hub',
         #     desired_capabilities=get_caps)
