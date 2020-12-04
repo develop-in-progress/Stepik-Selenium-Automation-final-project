@@ -24,8 +24,8 @@ def pytest_generate_tests(metafunc):
         pass
     try:
         if "browser" in metafunc.fixturenames \
-                and metafunc.config.getoption("browser_name") == 'local_parallel_all_browsers':
-            metafunc.parametrize("browser", ['firefox', 'chrome'], indirect=True)
+                and metafunc.config.getoption("browser_name") == 'parallel':
+            metafunc.parametrize("browser", ['parallel_chrome', 'parallel_firefox'], indirect=True)
     except ValueError as e:
         pass
 
@@ -44,9 +44,9 @@ def browser(request):
     options.add_argument("--disable-default-apps")
     options.add_argument('--no-sandbox')
     # options.add_argument("--headless")
-    if browser_name == "chrome":
+    if browser_name == "chrome" or request.param == 'parallel_chrome':
         browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-    elif browser_name == "firefox":
+    elif browser_name == "firefox" or request.param == 'parallel_firefox':
         browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), firefox_profile=firefox_opts)
     elif browser_name == 'grid_firefox' or request.param == 'grid_firefox':
         browser = webdriver.Remote(   # Different url for access to Grid in docker for jenkins
