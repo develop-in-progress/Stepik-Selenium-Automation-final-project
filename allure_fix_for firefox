@@ -1,0 +1,2 @@
+You can leverage this restriction by going to about:config url and then uncheck privacy.file_unique_origin boolean value.
+However be aware that this only reverts to < 68 protection mode, which is to only allow digging in, even with this flag down you won't be able to fetch ../some_other_dir/foo.bar.

@@ -8,7 +8,7 @@ import datetime
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
-def pytest_addoption(parser): # default='chrome',
+def pytest_addoption(parser):  # default='chrome',
     parser.addoption('--browser_name', action='store',
                      help="Choose browser: chrome or firefox")
     parser.addoption('--language', action='store', default='en',
@@ -30,6 +30,22 @@ def pytest_generate_tests(metafunc):
         pass
 
 
+chrome_caps = {
+    "browserName": "chrome",
+    "browserVersion": "87.0",
+    "selenoid:options": {
+        "enableVNC": True,
+        "enableVideo": False
+    }
+}
+ff_caps = {
+    "browserName": "firefox",
+    "browserVersion": "83.0",
+    "selenoid:options": {
+        "enableVNC": True,
+        "enableVideo": False
+    }
+}
 @pytest.fixture
 def browser(request):
     browser_name = request.config.getoption("browser_name")
@@ -56,16 +72,16 @@ def browser(request):
         print("Invalid browser_name: {}".format(browser_name))
     try:
         if browser_name == 'grid_firefox' or request.param == 'grid_firefox':
-            browser = webdriver.Remote(   # Different url for access to Grid in docker for jenkins
-                command_executor='http://localhost:4444/wd/hub',   # command_executor='http://seleniumhub:4444/wd/hub'
-                desired_capabilities=DesiredCapabilities.FIREFOX, browser_profile=firefox_opts)
+            browser = webdriver.Remote(  # Different url for access to Grid in docker for jenkins
+                command_executor='http://localhost:4444/wd/hub',  # command_executor='http://seleniumhub:4444/wd/hub'
+                desired_capabilities=ff_caps, browser_profile=firefox_opts)
     except AttributeError:
         print("Invalid browser_name: {}".format(browser_name))
     try:
         if browser_name == 'grid_chrome' or request.param == 'grid_chrome':
             browser = webdriver.Remote(
                 command_executor='http://localhost:4444/wd/hub',
-                desired_capabilities=DesiredCapabilities.CHROME, options=options)
+                desired_capabilities=chrome_caps, options=options)
     except AttributeError:
         print("Invalid browser_name: {}".format(browser_name))
 
