@@ -22,6 +22,12 @@ def pytest_generate_tests(metafunc):
             metafunc.parametrize("browser", ['grid_firefox', 'grid_chrome'], indirect=True)
     except ValueError as e:
         pass
+    try:
+        if "browser" in metafunc.fixturenames \
+                and metafunc.config.getoption("browser_name") == 'local_parallel_all_browsers':
+            metafunc.parametrize("browser", ['firefox', 'chrome'], indirect=True)
+    except ValueError as e:
+        pass
 
 
 @pytest.fixture

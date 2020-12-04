@@ -26,6 +26,6 @@ install:
 script:
 
 
-  - pytest
+  - pytest --browser_name=local_parallel_all_browsers
 
 
