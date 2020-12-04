@@ -44,20 +44,31 @@ def browser(request):
     options.add_argument("--disable-default-apps")
     options.add_argument('--no-sandbox')
     # options.add_argument("--headless")
-    if browser_name == "chrome" or request.param == 'parallel_chrome':
-        browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-    elif browser_name == "firefox" or request.param == 'parallel_firefox':
-        browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), firefox_profile=firefox_opts)
-    elif browser_name == 'grid_firefox' or request.param == 'grid_firefox':
-        browser = webdriver.Remote(   # Different url for access to Grid in docker for jenkins
-            command_executor='http://localhost:4444/wd/hub',   # command_executor='http://seleniumhub:4444/wd/hub'
-            desired_capabilities=DesiredCapabilities.FIREFOX, browser_profile=firefox_opts)
-    elif browser_name == 'grid_chrome' or request.param == 'grid_chrome':
-        browser = webdriver.Remote(
-            command_executor='http://localhost:4444/wd/hub',
-            desired_capabilities=DesiredCapabilities.CHROME, options=options)
-    else:
-        raise pytest.UsageError("--browser_name should be chrome or firefox")
+    try:
+        if browser_name == "chrome" or request.param == 'parallel_chrome':
+            browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    except AttributeError:
+        print("Invalid browser_name: {}".format(browser_name))
+    try:
+        if browser_name == "firefox" or request.param == 'parallel_firefox':
+            browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), firefox_profile=firefox_opts)
+    except AttributeError:
+        print("Invalid browser_name: {}".format(browser_name))
+    try:
+        if browser_name == 'grid_firefox' or request.param == 'grid_firefox':
+            browser = webdriver.Remote(   # Different url for access to Grid in docker for jenkins
+                command_executor='http://localhost:4444/wd/hub',   # command_executor='http://seleniumhub:4444/wd/hub'
+                desired_capabilities=DesiredCapabilities.FIREFOX, browser_profile=firefox_opts)
+    except AttributeError:
+        print("Invalid browser_name: {}".format(browser_name))
+    try:
+        if browser_name == 'grid_chrome' or request.param == 'grid_chrome':
+            browser = webdriver.Remote(
+                command_executor='http://localhost:4444/wd/hub',
+                desired_capabilities=DesiredCapabilities.CHROME, options=options)
+    except AttributeError:
+        print("Invalid browser_name: {}".format(browser_name))
+
     yield browser
     browser.quit()
 

@@ -26,6 +26,6 @@ install:
 script:
 
 
-  - pytest --browser_name=parallel
+  - pytest --browser_name=parallel --reruns=1 test_main_page.py
 
 
