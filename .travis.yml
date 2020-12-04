@@ -9,6 +9,7 @@ python:
 
 addons:
   chrome: stable
+  firefox: stable
 
 #env:
 #  global:
@@ -20,12 +21,10 @@ addons:
 #    - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 install:
     - pip install -r requirements.txt
-    - sudo apt-get install chromium-browser
-    - sudo apt-get install firefox
+#    - sudo apt-get install chromium-browser
+#    - sudo apt-get install firefox
 
 script:
-
-
-  - pytest --browser_name=parallel --reruns=1 test_main_page.py
+    - pytest --browser_name=parallel --reruns=1 test_main_page.py
 
 
