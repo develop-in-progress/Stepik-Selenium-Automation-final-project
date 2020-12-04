@@ -9,7 +9,7 @@ python:
 
 addons:
   chrome: stable
-  firefox: stable
+  firefox: latest
 
 #env:
 #  global:
