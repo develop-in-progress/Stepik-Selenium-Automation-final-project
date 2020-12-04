@@ -1,4 +1,4 @@
-pytest
+pytest==6.1.2
 selenium
 webdriver-manager
 allure-pytest
