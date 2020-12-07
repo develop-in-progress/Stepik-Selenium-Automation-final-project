@@ -5,53 +5,37 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 import datetime
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenoid_desires_caps import *
 
 
-def pytest_addoption(parser):  # default='chrome',
+def pytest_addoption(parser):
     parser.addoption('--browser_name', action='store',
-                     help="Choose browser: chrome or firefox")
+                     help="Choose single browser: chrome or firefox")
     parser.addoption('--language', action='store', default='en',
                      help="Choose language")
-    parser.addoption("--grid", action="store", help="runs all tests in Selenium Grid in parralel")
+    parser.addoption("--selenium_grid", action="store", default=None,
+                     help="runs all tests in Selenium Grid in parralel")
+    parser.addoption("--selenoid", action="store", default=None,
+                     help="runs all tests in Selenoid in parralel")
 
 
 def pytest_generate_tests(metafunc):
-    try:
-        if "browser" in metafunc.fixturenames and metafunc.config.getoption("browser_name") == 'grid':
-            metafunc.parametrize("browser", ['grid_firefox', 'grid_chrome'], indirect=True)
-    except ValueError as e:
-        pass
-    try:
-        if "browser" in metafunc.fixturenames \
-                and metafunc.config.getoption("browser_name") == 'parallel':
-            metafunc.parametrize("browser", ['parallel_chrome', 'parallel_firefox'], indirect=True)
-    except ValueError as e:
-        pass
+    if "browser" in metafunc.fixturenames and metafunc.config.getoption("selenium_grid") is not None:
+        metafunc.parametrize("browser", ['grid_firefox', 'grid_chrome'], indirect=True)
+    elif "browser" in metafunc.fixturenames and metafunc.config.getoption("selenoid") is not None:
+        metafunc.parametrize("browser", ['selenoid_chrome', 'selenoid_firefox'], indirect=True)
 
 
-chrome_caps = {
-    "browserName": "chrome",
-    "browserVersion": "87.0",
-    "selenoid:options": {
-        "enableVNC": True,
-        "enableVideo": False
-    }
-}
-ff_caps = {
-    "browserName": "firefox",
-    "browserVersion": "83.0",
-    "selenoid:options": {
-        "enableVNC": True,
-        "enableVideo": False
-    }
-}
+
 @pytest.fixture
 def browser(request):
     browser_name = request.config.getoption("browser_name")
     language = request.config.getoption("language")
-    firefox_opts = webdriver.FirefoxProfile()
-    firefox_opts.set_preference("intl.accept_languages", language)
+    firefox_profile = webdriver.FirefoxProfile()
+    firefox_profile.set_preference("intl.accept_languages", language)
+    firefox_profile.update_preferences()
+    # firefox_opts = webdriver.FirefoxOptions()
+    # firefox_opts.add_argument('headless')
     options = webdriver.ChromeOptions()
     options.add_experimental_option('prefs', {'intl.accept_languages': language})
     options.add_argument("--no-sandbox")  # This make Chromium reachable
@@ -60,31 +44,27 @@ def browser(request):
     options.add_argument("--disable-default-apps")
     options.add_argument('--no-sandbox')
     # options.add_argument("--headless")
-    try:
-        if browser_name == "chrome" or request.param == 'parallel_chrome':
-            browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-    except AttributeError:
-        print("Invalid browser_name: {}".format(browser_name))
-    try:
-        if browser_name == "firefox" or request.param == 'parallel_firefox':
-            browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), firefox_profile=firefox_opts)
-    except AttributeError:
-        print("Invalid browser_name: {}".format(browser_name))
-    try:
-        if browser_name == 'grid_firefox' or request.param == 'grid_firefox':
-            browser = webdriver.Remote(  # Different url for access to Grid in docker for jenkins
-                command_executor='http://localhost:4444/wd/hub',  # command_executor='http://seleniumhub:4444/wd/hub'
-                desired_capabilities=ff_caps, browser_profile=firefox_opts)
-    except AttributeError:
-        print("Invalid browser_name: {}".format(browser_name))
-    try:
-        if browser_name == 'grid_chrome' or request.param == 'grid_chrome':
-            browser = webdriver.Remote(
-                command_executor='http://localhost:4444/wd/hub',
-                desired_capabilities=chrome_caps, options=options)
-    except AttributeError:
-        print("Invalid browser_name: {}".format(browser_name))
-
+    browser=None
+    if browser_name == "chrome":
+        browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    elif browser_name == "firefox":
+        browser = webdriver.Firefox(executable_path=GeckoDriverManager().install(), firefox_profile=firefox_profile)
+    elif request.param == 'grid_firefox':
+        browser = webdriver.Remote(  # Different url for access to Grid in docker for jenkins
+            command_executor='http://localhost:4444/wd/hub',  # command_executor='http://seleniumhub:4444/wd/hub'
+            desired_capabilities=webdriver.DesiredCapabilities.FIREFOX.copy(), browser_profile=firefox_profile)
+    elif request.param == 'grid_chrome':
+        browser = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            desired_capabilities=webdriver.DesiredCapabilities.CHROME.copy(), options=options)
+    elif request.param == 'selenoid_chrome':
+        browser = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            desired_capabilities=chrome_caps, options=options)
+    elif request.param == 'selenoid_firefox':
+        browser = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            desired_capabilities=ff_caps, browser_profile=firefox_profile)
     yield browser
     browser.quit()
 
@@ -109,4 +89,3 @@ def pytest_runtest_makereport(item, call):
                 f.write(str(datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")) + "\n" + rep.longreprtext)
         except Exception as e:
             print("Logging err: ", e)
-            pass
