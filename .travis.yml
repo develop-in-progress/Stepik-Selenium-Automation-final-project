@@ -25,6 +25,6 @@ install:
 #    - sudo apt-get install firefox
 
 script:
-    - pytest --browser_name=parallel --reruns=1 test_main_page.py
+    - pytest --browser_name=chrome --reruns=1 test_main_page.py
 
 
