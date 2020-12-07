@@ -24,7 +24,8 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize("browser", ['grid_firefox', 'grid_chrome'], indirect=True)
     elif "browser" in metafunc.fixturenames and metafunc.config.getoption("selenoid") is not None:
         metafunc.parametrize("browser", ['selenoid_chrome', 'selenoid_firefox'], indirect=True)
-
+    elif "browser" in metafunc.fixturenames and metafunc.config.getoption("browser") == 'parallel':
+        metafunc.parametrize("browser", ['chrome', 'firefox'], indirect=True)
 
 
 @pytest.fixture
