@@ -1,0 +1,2 @@
+sudo systemctl start jenkins
+http://localhost:8090 - manjaro

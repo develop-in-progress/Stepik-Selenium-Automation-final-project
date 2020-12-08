@@ -22,9 +22,13 @@ def pytest_addoption(parser):
 def pytest_generate_tests(metafunc):
     if "browser" in metafunc.fixturenames and metafunc.config.getoption("selenium_grid") is not None:
         metafunc.parametrize("browser", ['grid_firefox', 'grid_chrome'], indirect=True)
-    elif "browser" in metafunc.fixturenames and metafunc.config.getoption("selenoid") is not None:
+    elif "browser" in metafunc.fixturenames and metafunc.config.getoption("selenoid") is not None\
+            and metafunc.config.getoption("selenoid") != "all":
         metafunc.parametrize("browser", ['selenoid_chrome', 'selenoid_firefox'], indirect=True)
-    elif "browser" in metafunc.fixturenames and metafunc.config.getoption("browser") == 'parallel':
+    elif "browser" in metafunc.fixturenames and metafunc.config.getoption("selenoid") == "all":
+        metafunc.parametrize("browser", ['selenoid_chrome', 'selenoid_firefox', 'selenoid_chrome_old',
+                                         'selenoid_firefox_old'], indirect=True)
+    elif "browser" in metafunc.fixturenames and metafunc.config.getoption("browser_name") == 'parallel':
         metafunc.parametrize("browser", ['chrome', 'firefox'], indirect=True)
 
 
@@ -45,7 +49,7 @@ def browser(request):
     options.add_argument("--disable-default-apps")
     options.add_argument('--no-sandbox')
     # options.add_argument("--headless")
-    browser=None
+    browser = None
     if browser_name == "chrome":
         browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     elif browser_name == "firefox":
@@ -61,11 +65,19 @@ def browser(request):
     elif request.param == 'selenoid_chrome':
         browser = webdriver.Remote(
             command_executor='http://localhost:4444/wd/hub',
-            desired_capabilities=chrome_caps, options=options)
+            desired_capabilities=selenoid_chrome_caps, options=options)
     elif request.param == 'selenoid_firefox':
         browser = webdriver.Remote(
             command_executor='http://localhost:4444/wd/hub',
-            desired_capabilities=ff_caps, browser_profile=firefox_profile)
+            desired_capabilities=selenoid_ff_caps, browser_profile=firefox_profile)
+    elif request.param == 'selenoid_chrome_old':  # This is second browser version in selenoid
+        browser = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            desired_capabilities=selenoid_chrome_caps_old, options=options)
+    elif request.param == 'selenoid_firefox_old':  # This is second browser version in selenoid
+        browser = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            desired_capabilities=selenoid_ff_caps_old, browser_profile=firefox_profile)
     yield browser
     browser.quit()
 
