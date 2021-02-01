@@ -15,8 +15,8 @@
     * ###### [Geckodriver](https://github.com/mozilla/geckodriver/releases/)
    Скачайте архивы, распакуйте .exe файлы и обязательно добавьте драйвера (как на UNIX системах, так и Windows). 
 4. Общий тест запускается командой (терминал открыт в папке проекта):
-    ##### `pytest`
-    Смена браузера на Firefox (по умолчанию тесты запускаются на Chrome):
+    ##### `pytest --browser_name=chrome`
+    Смена браузера на Firefox:
     ##### `pytest --browser_name=firefox`
     Выполнение заданий с меткой 'need_review':
     ##### `pytest -v --tb=line --language=en -m need_review`
