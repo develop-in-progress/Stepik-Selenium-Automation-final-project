@@ -4,7 +4,7 @@ from pages.basket_page import BasketPage
 from pages.product_page import ProductPage
 import pytest
 
-raise Exception('Should fail check1')
+raise Exception('Should fail check11')
 @pytest.mark.login_guest
 class TestLoginFromMainPage:
 
