@@ -2,7 +2,7 @@
 ### Пример проекта автоматизации тестирования на Selenium/PyTest с применением Page Object паттерна. Реализована возможность смены браузеров (для каждого тестового комплекта браузер запускатся отдельно и закрывается после теста) и маркировка тестов
 1.  Клонируйте проект с GitHub и активируйте виртуальное окружение:
     ##### `python -m venv selenium_env`
-    For Win:
+    For Win: 
     ##### `selenium_env\Scripts\activate.bat`
     For Unix:
     ##### `source selenium_env\Scripts\activate`
