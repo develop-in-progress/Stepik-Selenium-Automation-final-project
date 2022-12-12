@@ -4,7 +4,7 @@ from pages.basket_page import BasketPage
 from pages.product_page import ProductPage
 import pytest
 
-
+raise Exception('test exc')
 @pytest.mark.login_guest
 class TestLoginFromMainPage:
 
